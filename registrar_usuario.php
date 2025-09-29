@@ -46,17 +46,18 @@
 
         // Recibir datos
         $nombre = $_POST['nombre'];
-        $contraseña = $_POST['contraseña'];
+        $password = $_POST['contraseña'];
         $email = $_POST['email'];
 
         // Insertar en la base
-        $sql = "INSERT INTO usuarios (nombre, contraseña, email) VALUES ('$nombre', '$contraseña', '$email')";
+  $sql = "INSERT INTO usuarios (nombre, email, password) VALUES ('$nombre', '$email', '$password')";
 
-        if ($conexion->query($sql) === TRUE) {
-            echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito</p>";
-        } else {
-            echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
-        }
+    if ($conexion->query($sql) === TRUE) {
+      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al inicio...</p>";
+      echo "<script>setTimeout(function(){ window.location.href = 'index.html'; }, 200);</script>";
+    } else {
+      echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
+    }
 
         $conexion->close();
     }
