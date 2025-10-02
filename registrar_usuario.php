@@ -31,10 +31,10 @@
 
     <?php
     if (isset($_POST['registrar'])) {
-        // Datos de conexión a MySQL en XAMPP
+        
         $host = "localhost";
-        $user = "root";     // usuario por defecto en XAMPP
-        $password = "";     // contraseña por defecto vacía
+        $user = "root";     
+        $password = "";     
         $dbname = "prueba";
 
         // Conexión con MySQLi
@@ -54,7 +54,7 @@
 
     if ($conexion->query($sql) === TRUE) {
       echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al inicio...</p>";
-      echo "<script>setTimeout(function(){ window.location.href = 'index.html'; }, 200);</script>";
+      echo "<script>setTimeout(function(){ window.location.href = 'index.php'; }, 200);</script>";
     } else {
       echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
     }
