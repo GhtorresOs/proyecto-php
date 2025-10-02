@@ -12,8 +12,11 @@ if ($conexion->connect_error) {
 $sql = "SELECT * FROM ventas";
 $result = mysqli_query($conexion, $sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
+
+
 <head>
     <meta charset="UTF-8">
     <title>Proyecto PHP</title>
@@ -98,13 +101,7 @@ $result = mysqli_query($conexion, $sql);
   </table>
 </div>
 
-<?php
-if (isset($_POST['cerrar_sesion'])) {
-  session_destroy();
-  header('Location: landing.html');
-  exit();
-}
-?>
+
   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,5 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
+<?php
+    @session_start();
+    session_destroy();
+    header("Location: index.php");
+?>
+
+
 <head>
     <meta charset="UTF-8">
     <title>Landing</title>
