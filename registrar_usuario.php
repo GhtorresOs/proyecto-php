@@ -53,8 +53,8 @@
   $sql = "INSERT INTO usuarios (nombre, email, password) VALUES ('$nombre', '$email', '$password')";
 
     if ($conexion->query($sql) === TRUE) {
-      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al inicio...</p>";
-      echo "<script>setTimeout(function(){ window.location.href = 'index.php'; }, 200);</script>";
+      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al login...</p>";
+      echo "<script>setTimeout(function(){ window.location.href = 'login.php'; }, 2000);</script>";
     } else {
       echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
     }
