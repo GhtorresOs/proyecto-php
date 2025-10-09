@@ -80,8 +80,10 @@ $result = mysqli_query($conexion, $sql);
     </button>
 
 
-    <a href="graficos.php" class="btn btn-secondary" style="margin-right:5px;">Gráficos</a>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalVenta">Añadir venta</button>
+    <div class="d-flex align-items-center" style="margin-right:10px;">
+      <a href="graficos.php" class="btn btn-secondary" style="margin-right:10px;">Gráficos</a>
+      <button type="button" class="btn btn-primary" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#modalVenta">Añadir venta</button>
+    </div>
 <!-- Modal para añadir venta -->
     <div class="modal fade" id="modalVenta" tabindex="-1" aria-labelledby="modalVentaLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -131,12 +133,6 @@ $result = mysqli_query($conexion, $sql);
     </div>
 
 
-   <!-- LINEA QUE MUESTRA EL USUARIO LOGUEADO -->
-  <?php if (isset($_SESSION['usuario_logeado'])): ?>
-    <span class="navbar-text ml-3 font-weight-bold text-primary" style="margin-right:1000px;"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></span>
-  <?php endif; ?>
-  <!-- LINEA QUE MUESTRA EL USUARIO LOGUEADO -->
-
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
@@ -146,9 +142,14 @@ $result = mysqli_query($conexion, $sql);
         <button class="btn btn-outline-success" type="submit">Buscar</button>
       </form>
 
-      <form method="post" class="mx-auto">
-        <button class="btn btn-danger mx-auto d-block" type="submit" name="cerrar_sesion" style="margin-right:50px;">Cerrar sesión</button>
-      </form>
+      <div class="d-flex align-items-center ms-auto">
+        <?php if (isset($_SESSION['usuario_logeado'])): ?>
+          <span class="navbar-text font-weight-bold text-primary me-3" style="margin-right:10px;"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></span>
+        <?php endif; ?>
+        <form method="post" class="mb-0">
+          <button class="btn btn-danger" type="submit" name="cerrar_sesion">Cerrar sesión</button>
+        </form>
+      </div>
     </div>
   
   </div>
