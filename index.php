@@ -10,6 +10,31 @@ if ($conexion->connect_error) {
   die("Error de conexión a la base de datos: " . $conexion->connect_error);
 }
 
+$cerrarSesion = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cerrar_sesion'])) {
+  session_unset();
+  session_destroy();
+  $cerrarSesion = true;
+  header('Location: landing.html');
+  exit();
+}
+
+// Procesar formulario de nueva venta
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['producto'], $_POST['year'], $_POST['precio_unidad'], $_POST['ingresos'], $_POST['region'])) {
+  $producto = $conexion->real_escape_string($_POST['producto']);
+  $year = (int)$_POST['year'];
+  $precio_unidad = (float)$_POST['precio_unidad'];
+  $ingresos = (float)$_POST['ingresos'];
+  $region = $conexion->real_escape_string($_POST['region']);
+  $vendedor = isset($_SESSION['usuario_logeado']) ? $conexion->real_escape_string($_SESSION['usuario_logeado']) : '';
+  $sql_insert = "INSERT INTO ventas (producto, year, vendedor, precio_unidad, ingresos, region) VALUES ('$producto', $year, '$vendedor', $precio_unidad, $ingresos, '$region')";
+  $conexion->query($sql_insert);
+  // Redirigir para evitar reenvío del formulario
+  header("Location: index.php");
+  exit();
+}
+
+//Consulta para las ventas en el buscador
 $sql = "SELECT * FROM ventas";
 if (isset($_SESSION['usuario_logeado'])) {
   $usuario = $_SESSION['usuario_logeado'];
@@ -54,11 +79,61 @@ $result = mysqli_query($conexion, $sql);
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <a href="graficos.php" class="btn btn-secondary">Gráficos</a>
+
+    <a href="graficos.php" class="btn btn-secondary" style="margin-right:5px;">Gráficos</a>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalVenta">Añadir venta</button>
+<!-- Modal para añadir venta -->
+    <div class="modal fade" id="modalVenta" tabindex="-1" aria-labelledby="modalVentaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalVentaLabel">Añadir venta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="formVenta" method="post" action="">
+          <div class="mb-3">
+            <label for="producto" class="form-label">Producto</label>
+            <input type="text" class="form-control" id="producto" name="producto" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="year" class="form-label">Año</label>
+            <input type="number" class="form-control" id="year" name="year" min="1900" max="2100" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="precio_unidad" class="form-label">Precio Unidad</label>
+            <input type="number" step="0.01" class="form-control" id="precio_unidad" name="precio_unidad" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="ingresos" class="form-label">Ingresos</label>
+            <input type="number" step="0.01" class="form-control" id="ingresos" name="ingresos" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="region" class="form-label">Región</label>
+            <input type="text" class="form-control" id="region" name="region" required>
+          </div>
+          <!-- El vendedor se toma de la sesión -->
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary" form="formVenta">Guardar cambios</button>
+      </div>
+      
+    </div>
+  </div>
+    </div>
+
 
    <!-- LINEA QUE MUESTRA EL USUARIO LOGUEADO -->
   <?php if (isset($_SESSION['usuario_logeado'])): ?>
-    <span class="navbar-text ml-3 font-weight-bold text-primary"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></span>
+    <span class="navbar-text ml-3 font-weight-bold text-primary" style="margin-right:1000px;"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></span>
   <?php endif; ?>
   <!-- LINEA QUE MUESTRA EL USUARIO LOGUEADO -->
 
@@ -72,7 +147,7 @@ $result = mysqli_query($conexion, $sql);
       </form>
 
       <form method="post" class="mx-auto">
-        <button class="btn btn-danger mx-auto d-block" type="submit" name="cerrar_sesion">Cerrar sesión</button>
+        <button class="btn btn-danger mx-auto d-block" type="submit" name="cerrar_sesion" style="margin-right:50px;">Cerrar sesión</button>
       </form>
     </div>
   
@@ -81,52 +156,67 @@ $result = mysqli_query($conexion, $sql);
 <!-- FIN DE NAVBAR -->
  <p></p>
  <p></p>
-<div>
-  <table class="table caption-top">
-    <caption>Ventas</caption>
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Producto</th>
-        <th scope="col">Año</th>
-        <th scope="col">Vendedor</th>
-        <th scope="col">Precio Unidad</th>
-        <th scope="col">Ingresos</th>
-        <th scope="col">Región</th>
 
-      </tr>
-    </thead>
-    <tbody>
-      <?php while ($row = mysqli_fetch_assoc($result)): ?>
-      <tr>
-        <td>
-          <?php echo $row ['id_venta']; ?>
-        </td>
-        <td>
-          <?php echo $row ['producto']; ?>
-        </td>
-        <td>
-          <?php echo $row ['year']; ?>  
-        </td>
-        <td>
-          <?php echo $row ['vendedor']; ?>
-        </td>
-        <td>
-          <?php echo $row ['precio_unidad']; ?>
-        </td>
-        <td>
-          <?php echo $row ['ingresos']; ?>
-        </td>
-        <td>
-          <?php echo $row ['region']; ?>
-        </td>
-      </tr>
-      <?php endwhile; ?>
-    </tbody>
-  </table>
-</div>
+<!-- Table 1 - Bootstrap Brain Component -->
+<section class="py-3 py-md-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-9 col-xl-8">
+        <div class="card widget-card border-light shadow-sm">
+          <div class="card-body p-4">
+            <h5 class="card-title widget-card-title mb-4">Ventas</h5>
+            <div class="table-responsive">
+              <table class="table table-borderless bsb-table-xl text-nowrap align-middle m-0">
+                <thead>
+                  <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Producto</th>
+                    <th scope="col">Año</th>
+                    <th scope="col">Vendedor</th>
+                    <th scope="col">Precio Unidad</th>
+                    <th scope="col">Ingresos</th>
+                    <th scope="col">Región</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                  <tr>
+                    <td>
+                      <?php echo $row ['id_venta']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row ['producto']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row ['year']; ?>  
+                    </td>
+                    <td>
+                      <?php echo $row ['vendedor']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row ['precio_unidad']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row ['ingresos']; ?>
+                    </td>
+                    <td>
+                      <?php echo $row ['region']; ?>
+                    </td>
+                  </tr>
+                  <?php endwhile; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
-  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
