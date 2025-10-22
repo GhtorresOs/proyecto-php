@@ -22,16 +22,16 @@ if ($conexion->connect_error) {
 </head>
 <body>
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg" style="background-color: #9ccbecff;">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Gráficos</a>
+  <span class="navbar-brand mb-0 h1">Gráficos</span>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" href="index.php">Inicio</a>
+            <a href="index.php" class="btn btn-secondary" style="margin-right:10px;">Inicio</a>
           </li>
           <?php if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin'): ?>
           <li class="nav-item dropdown">
@@ -53,7 +53,7 @@ if ($conexion->connect_error) {
 
 
   <div class="container mt-5">
-    <?php
+  <?php
     $vendedores = ['medina', 'vega', 'araujo'];
     $vendedor_seleccionado = null;
     if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin') {
@@ -112,12 +112,45 @@ if ($conexion->connect_error) {
       <h2 class="mb-4 text-center">Seleccione un vendedor en el menú para ver sus ventas</h2>
       <?php
     }
-    // FIN bloque PHP principal
+    // --- Línea de tiempo: ventas por producto y año ---
+    // Obtener todos los años y productos
+    $query_timeline = "SELECT year, producto, COUNT(*) as cantidad FROM ventas ";
+    if ($vendedor_seleccionado) {
+      $query_timeline .= "WHERE vendedor = '" . $conexion->real_escape_string($vendedor_seleccionado) . "' ";
+    }
+    $query_timeline .= "GROUP BY year, producto ORDER BY year ASC, producto ASC";
+    $result_timeline = $conexion->query($query_timeline);
+    $timeline_data = [];
+    $productos_timeline = [];
+    $years_timeline = [];
+    while ($row = $result_timeline->fetch_assoc()) {
+      $year = $row['year'];
+      $producto = $row['producto'];
+      $cantidad = (int)$row['cantidad'];
+      if (!in_array($year, $years_timeline)) $years_timeline[] = $year;
+      if (!in_array($producto, $productos_timeline)) $productos_timeline[] = $producto;
+      $timeline_data[$producto][$year] = $cantidad;
+    }
+    // Asegurar que todos los productos tengan datos para todos los años (rellenar con 0)
+    sort($years_timeline);
+    foreach ($productos_timeline as $prod) {
+      foreach ($years_timeline as $yr) {
+        if (!isset($timeline_data[$prod][$yr])) $timeline_data[$prod][$yr] = 0;
+      }
+      ksort($timeline_data[$prod]);
+    }
     ?>
+
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+      <h4 class="text-center">Línea de tiempo: Ventas de productos por año</h4>
+      <canvas id="timelineChart"></canvas>
+    </div>
+  </div>
 
   <script>
     // Gráfico de barras
-    <?php if ((isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin' && !$vendedor_seleccionado) || $vendedor_seleccionado): ?>
+  <?php if ((isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin' && !$vendedor_seleccionado) || $vendedor_seleccionado): ?>
     const ctx = document.getElementById('graficoVentas').getContext('2d');
     const graficoVentas = new Chart(ctx, {
       type: 'bar',
@@ -169,6 +202,44 @@ if ($conexion->connect_error) {
       options: { responsive: true }
     });
     <?php endif; ?>
+    // --- Línea de tiempo ---
+    const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+    const timelineLabels = <?php echo json_encode($years_timeline); ?>;
+    const timelineDatasets = [
+      <?php foreach ($productos_timeline as $prod): ?>
+      {
+        label: <?php echo json_encode($prod); ?>,
+        data: <?php echo json_encode(array_values($timeline_data[$prod])); ?>,
+        fill: false,
+        borderColor: '#' + Math.floor(Math.random()*16777215).toString(16),
+        tension: 0.1
+      },
+      <?php endforeach; ?>
+    ];
+    new Chart(timelineCtx, {
+      type: 'line',
+      data: {
+        labels: timelineLabels,
+        datasets: timelineDatasets
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: 'Cantidad de ventas' }
+          },
+          x: {
+            title: { display: true, text: 'Año' }
+          }
+        }
+      }
+    });
   </script>
 </body>
 </html>
