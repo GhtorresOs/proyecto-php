@@ -137,31 +137,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
     <body>
       <!-- Navbar de la pagina -->
         <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
-            <div class="container-fluid" >
+            <div class="container-fluid">
                 <span class="navbar-brand mb-0 h1">Inicio</span>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <a href="graficos.php" class="btn btn-primary" style="margin-right:10px;">Gráficos</a>
-                        <button type="button" class="btn btn-primary" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#añadirventa">Añadir venta</button>
 
-                    <a href="ventas.php" class="btn btn-secondary" style="margin-right:10px;">Ventas</a> 
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" style="margin-right:10px;" name="busqueda" placeholder="Buscar" aria-label="Busqueda" value="<?php echo isset($_GET['busqueda']) ? htmlspecialchars($_GET['busqueda']) : ''; ?>">
-                        <button class=" btn btn-success" type="submit" style="margin-right:10px;">Buscar</button>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a href="graficos.php" class="btn btn-primary" style="margin-right:10px;">Gráficos</a>
+                        </li>
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-primary" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#añadirventa">Añadir venta</button>
+                        </li>
+                        <li class="nav-item">
+                            <a href="ventas.php" class="btn btn-secondary" style="margin-right:10px;">Ventas</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex mx-auto" style="width: 40%;">
+                        <input class="form-control me-2" type="search" name="busqueda" placeholder="Buscar" aria-label="Busqueda" value="<?php echo isset($_GET['busqueda']) ? htmlspecialchars($_GET['busqueda']) : ''; ?>">
+                        <button class="btn btn-success" type="submit">Buscar</button>
                     </form>
-                    <div>
+                    <div class="d-flex ms-auto align-items-center">
                         <?php if (isset($_SESSION['usuario_logeado'])): ?>
-                            <button type="button" class="btn btn-warning" style="margin-right:10px;" disabled><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></button>
-                        <?php endif; ?>                                            
+                            <button type="button" class="btn btn-warning me-2" disabled><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?>
+                        </button>
+                        <?php endif; ?>
+                        <form method="post" class="mb-0">
+                            <button class="btn btn-danger" type="submit" name="cerrar_sesion" style="margin-right:10px;">Cerrar Sesión</button>
+                        </form>
                     </div>
-                    <form method="post" class="mb-0">
-                        <button class="btn btn-danger" type="submit" name="cerrar_sesion" style="margin-right:10px;">Cerrar Sesion</button>
-                    </form>       
                 </div>
             </div>
         </nav>
+        
       <!-- Navbar de la pagina -->
         <p></p>
         <p></p>
