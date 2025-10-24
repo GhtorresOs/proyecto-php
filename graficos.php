@@ -1,54 +1,49 @@
 <?php
-
-session_start();
-// Conexión a la base de datos 'prueba'
-$host = "localhost";
-$user = "root";
-$password = "";
-$dbname = "prueba";
-$conexion = new mysqli($host, $user, $password, $dbname);
-if ($conexion->connect_error) {
-  die("Error de conexión a la base de datos: " . $conexion->connect_error);
-}
+  session_start();
+  // Conexión a la base de datos 'prueba'
+  $host = "localhost";
+  $user = "root";
+  $password = "";
+  $dbname = "prueba";
+  $conexion = new mysqli($host, $user, $password, $dbname);
+  if ($conexion->connect_error) {
+    die("Error de conexión a la base de datos: " . $conexion->connect_error);
+  }
 ?>
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Gráficos de Ventas</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-</head>
-<body>
-
-  <nav class="navbar navbar-expand-lg bg-body-tertiary" style="background-color: #9ccbecff;">
-    <div class="container-fluid">
-  <span class="navbar-brand mb-0 h1">Gráficos</span>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a href="index.php" class="btn btn-secondary" style="margin-right:10px;">Inicio</a>
-          </li>
-          <?php if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin'): ?>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Ver ventas por vendedor
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <li><a class="dropdown-item" href="graficos.php?vendedor=medina">Ventas de Medina</a></li>
-              <li><a class="dropdown-item" href="graficos.php?vendedor=vega">Ventas de Vega</a></li>
-              <li><a class="dropdown-item" href="graficos.php?vendedor=araujo">Ventas de Araujo</a></li>
-            </ul>
-          </li>
-          <?php endif; ?>
-        </ul>
-      </div>
-    </div>
-  </nav>
+  <head>
+    <title>Gráficos de Ventas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
+      <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1">Gráficos</span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a href="index.php" class="btn btn-primary" style="margin-right:10px;">Inicio</a>
+            </li>
+            <?php if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin'): ?>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Ver ventas por vendedor</a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li><a class="dropdown-item" href="graficos.php?vendedor=medina">Ventas de Medina</a></li>
+                  <li><a class="dropdown-item" href="graficos.php?vendedor=vega">Ventas de Vega</a></li>
+                  <li><a class="dropdown-item" href="graficos.php?vendedor=araujo">Ventas de Araujo</a></li>
+                </ul>
+                <?php endif; ?>
+              </ul>
+            </div>
+          </div>
+        </nav>
 
 
 
