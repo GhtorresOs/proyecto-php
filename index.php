@@ -123,21 +123,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
   echo "<script>alert('Venta actualizada correctamente');window.location='index.php';</script>";
   exit();
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
         <title>Proyecto PHP</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     </head>
 
     <body>
       <!-- Navbar de la pagina -->
-        <nav class="navbar navbar-expand-lg" style="background-color: #9ccbecff;">
-            <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
+            <div class="container-fluid" >
                 <span class="navbar-brand mb-0 h1">Inicio</span>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -152,9 +152,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                         <button class=" btn btn-success" type="submit" style="margin-right:10px;">Buscar</button>
                     </form>
                     <div>
-                      <?php if (isset($_SESSION['usuario_logeado'])): ?>
-                        <span class="navbar-text font-weight-bold text-primary me-3" style="margin-right:10px;"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></span>
-                      <?php endif; ?>                                            
+                        <?php if (isset($_SESSION['usuario_logeado'])): ?>
+                            <button type="button" class="btn btn-warning" style="margin-right:10px;" disabled><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></button>
+                        <?php endif; ?>                                            
                     </div>
                     <form method="post" class="mb-0">
                         <button class="btn btn-danger" type="submit" name="cerrar_sesion" style="margin-right:10px;">Cerrar Sesion</button>
@@ -174,7 +174,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                             <div class="card-body p-4">
                                 <h5 class="card-title widget-card-title mb-4">Ventas</h5>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered bsb-table-xl text-nowrap align-middle m-0" >
+                                    <table class="table table-bordered bsb-table-xl text-nowrap align-middle m-0 " >
                                         <thead>
                                             <tr>
                                                 <th scope="col">ID</th>
@@ -198,8 +198,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                                 <td><?php echo $row ['ingresos']; ?></td>
                                                 <td><?php echo $row ['region']; ?></td>
                                                 <td>
-                                                    <div class="btn-group" role="group">
-                                                        <button type="button" class="btn btn-info" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#editarventa" data-id="<?php echo $row['id_venta']; ?>" data-producto="<?php echo $row['producto']; ?>" data-year="<?php echo $row['year']; ?>" data-precio_unidad="<?php echo $row['precio_unidad']; ?>" data-ingresos="<?php echo $row['ingresos']; ?>" data-region="<?php echo $row['region']; ?>">
+                                                    <div class="d-grid gap-2 d-md-block">
+                                                        <button type="button" class="btn btn-info" style="margin-left:10px;" data-bs-toggle="modal" data-bs-target="#editarventa" data-id="<?php echo $row['id_venta']; ?>" data-producto="<?php echo $row['producto']; ?>" data-year="<?php echo $row['year']; ?>" data-precio_unidad="<?php echo $row['precio_unidad']; ?>" data-ingresos="<?php echo $row['ingresos']; ?>" data-region="<?php echo $row['region']; ?>">
                                                             Editar Venta
                                                         </button>
                                                         <button type="button" class="btn btn-danger" style="margin-left:10px;" data-bs-toggle="modal" data-bs-target="#eliminarventa" data-id="<?php echo $row['id_venta']; ?>">
@@ -208,7 +208,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                                     </div>         
                                                 </td>                                       
                                             </tr>
-                                            
                                             <?php endwhile; ?>                                            
                                         </tbody>                                        
                                     </table>
@@ -354,5 +353,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
         }
     </script>
     </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </html>
