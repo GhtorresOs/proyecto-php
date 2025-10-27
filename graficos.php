@@ -36,6 +36,9 @@
             <li class="nav-item">
               <a href="index.php" class="btn btn-primary" style="margin-right:10px;">Inicio</a>
             </li>
+            <li class="nav-item">
+              <a href="ventas.php" class="btn btn-secondary" style="margin-right:10px;">Ventas</a>
+            </li>
             <?php if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin'): ?>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Ver ventas por vendedor</a>
