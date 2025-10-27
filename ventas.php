@@ -10,14 +10,49 @@ if ($conexion->connect_error) {
   die("Error de conexión a la base de datos: " . $conexion->connect_error);
 }
 
-//CIERRE DE SESION
-$cerrarSesion = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cerrar_sesion'])) {
-  session_unset();
-  session_destroy();
-  $cerrarSesion = true;
-  header('Location: landing.html');
-  exit();
+// Determinar permiso/alcance por vendedor: si el usuario no es admin, solo verá sus datos
+$vendedor_logeado = isset($_SESSION['usuario_logeado']) ? $_SESSION['usuario_logeado'] : null;
+$is_admin = $vendedor_logeado && strtolower($vendedor_logeado) === 'admin';
+$where_vendedor = '';
+if (!$is_admin && $vendedor_logeado) {
+        $where_vendedor = "WHERE vendedor = '" . $conexion->real_escape_string($vendedor_logeado) . "'";
+}
+
+
+$sql = "SELECT producto, COUNT(producto) AS cantidad_productos FROM ventas " . $where_vendedor . " GROUP BY producto";
+$res = $conexion->query($sql);
+$productos = [];
+if ($res) {
+    while ($row = $res->fetch_assoc()) {
+        $productos[] = $row;
+    }
+}
+
+// Consulta de qué producto genera más ganancias (suma de importe)
+$sql_total = "SELECT producto, SUM(importe) AS total_ventas FROM ventas " . $where_vendedor . " GROUP BY producto";
+$res_total = $conexion->query($sql_total);
+$ganancias = [];
+if ($res_total) {
+    while ($row = $res_total->fetch_assoc()) {
+        $ganancias[] = $row;
+    }
+}
+
+$sql_vendedores = "SELECT vendedor, COUNT(*) AS cantidad_ventas FROM ventas " . ($is_admin ? "" : $where_vendedor) . " GROUP BY vendedor ORDER BY cantidad_ventas DESC";
+$res_vendedores = $conexion->query($sql_vendedores);
+$vendedores = [];
+if ($res_vendedores) {
+    while ($row = $res_vendedores->fetch_assoc()) {
+        $vendedores[] = $row;
+    }
+}
+$sql_years = "SELECT year, COUNT(*) AS producto_year FROM ventas " . $where_vendedor . " GROUP BY year ORDER BY year ASC";
+$res_years = $conexion->query($sql_years);
+$years = [];
+if ($res_years) {
+    while ($row = $res_years->fetch_assoc()) {
+        $years[] = $row;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -44,7 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cerrar_sesion'])) {
                 <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                    <a class="btn btn-secondary me-3" href="index.php" role="button">Inicio</a>
+                    <a class="btn btn-secondary" style="margin-right:10px;" href="index.php" role="button">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="graficos.php" class="btn btn-primary" style="margin-right:10px;">Gráficos</a>
                     </li>
                     <li class="nav-item">
                         <?php if (isset($_SESSION['usuario_logeado'])): ?>
@@ -63,38 +101,93 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cerrar_sesion'])) {
     <!-- Tarjetas de la pagina -->
 
     <div class="container my-5" style="max-width: 1100px;">
-        <div class="card-group">
-
-            <div class="card text-white bg-secondary mx-2">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Resumen de ventas</h5>
+                        <p class="card-text">Cantidad de ventas registradas por producto</p>
+                        <?php if (!empty($productos)): ?>
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($productos as $p): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <?php echo htmlspecialchars($p['producto']); ?>
+                                        <span class="badge bg-primary rounded-pill"><?php echo (int)$p['cantidad_productos']; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="alert alert-secondary" role="alert">No se encontraron ventas para mostrar.</div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
-            <div class="card mx-2 text-white bg-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ingresos por producto</h5>
+                        <p class="card-text">Total de importe generado por producto</p>
+                        <?php if (!empty($ganancias)): ?>
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($ganancias as $g): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <?php echo htmlspecialchars($g['producto']); ?>
+                                        <span class="badge bg-success rounded-pill">$<?php echo number_format((float)$g['total_ventas'], 2, ',', '.'); ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos de ingresos.</div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
 
-            <div class="card mx-2 text-white bg-secondary">
-                <div class="card-body">
-                    <h5 class="card-title">Card title</h5>
-                    <h6 class="card-subtitle mb-2 text-white">Card subtitle</h6>
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                    <a href="#" class="card-link">Card link</a>
-                    <a href="#" class="card-link">Another link</a>
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ventas por vendedor</h5>
+                        <?php if (!empty($vendedores)): ?>
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($vendedores as $v): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <?php echo htmlspecialchars($v['vendedor']); ?>
+                                        <span class="badge bg-info rounded-pill"><?php echo (int)$v['cantidad_ventas']; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos de vendedores.</div>
+                        <?php endif; ?>
+                    </div>
                 </div>
             </div>
+        </div>
+    </div>
 
+    <div class="container my-4" style="max-width: 1100px;">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Ventas por año</h5>
+                        <p class="card-text">Número de ventas registrado en cada año</p>
+                        <?php if (!empty($years)): ?>
+                            <ul class="list-group list-group-flush">
+                                <?php foreach ($years as $y): ?>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Año <?php echo htmlspecialchars($y['year']); ?>
+                                        <span class="badge bg-secondary rounded-pill"><?php echo (int)$y['producto_year']; ?></span>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php else: ?>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos por año.</div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <!-- Tarjetas de la pagina -->
