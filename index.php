@@ -152,10 +152,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
 
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a href="graficos.php" class="btn btn-primary" style="margin-right:10px;">Gráficos</a>
+                            <button type="button" class="btn btn-primary" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#añadirventa">Añadir venta</button>
                         </li>
                         <li class="nav-item">
-                            <button type="button" class="btn btn-primary" style="margin-right:10px;" data-bs-toggle="modal" data-bs-target="#añadirventa">Añadir venta</button>
+                            <a href="graficos.php" class="btn btn-primary" style="margin-right:10px;">Gráficos</a>
                         </li>
                         <li class="nav-item">
                             <a href="ventas.php" class="btn btn-secondary" style="margin-right:10px;">Ventas</a>
