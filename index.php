@@ -135,6 +135,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
     </head>
 
     <body>
+        <style>
+            body{
+                background-color: #9ccbecff;
+            }
+        </style>
       <!-- Navbar de la pagina -->
         <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
             <div class="container-fluid">
@@ -162,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                     </form>
                     <div class="d-flex ms-auto align-items-center">
                         <?php if (isset($_SESSION['usuario_logeado'])): ?>
-                            <button type="button" class="btn btn-warning me-2" disabled><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?>
+                            <button type="button" class="btn btn-warning" disabled style="margin-right:10px;"><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?>
                         </button>
                         <?php endif; ?>
                         <form method="post" class="mb-0">
@@ -181,9 +186,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
             <div class="container-fluid">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-9 col-xl-8">
-                        <div class="card widget-card border-light shadow-sm">
+                        <div class="card widget-card border-light">
                             <div class="card-body p-4">
-                                <h5 class="card-title widget-card-title mb-4">Ventas</h5>
+                                <h5 class="card-title widget-card-title mb-4">Registro de ventas</h5>
                                 <div class="table-responsive">
                                     <table class="table table-bordered bsb-table-xl text-nowrap align-middle m-0 " >
                                         <thead>

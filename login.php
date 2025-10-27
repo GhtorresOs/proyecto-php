@@ -53,6 +53,11 @@ if (isset($_POST['ingresar'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center vh-100">
+  <style>
+    body{
+      background-color: #9ccbecff;
+    }
+  </style>
   <div class="col-md-4">
     <div class="card shadow-lg border-0 rounded-4">
       <div class="card-body p-4">
