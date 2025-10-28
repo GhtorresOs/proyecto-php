@@ -9,6 +9,14 @@
   if ($conexion->connect_error) {
     die("Error de conexión a la base de datos: " . $conexion->connect_error);
   }
+  // Obtener lista dinámica de usuarios (vendedores) desde la tabla usuarios
+  $vendedores = [];
+  $res_users = $conexion->query("SELECT nombre FROM usuarios ORDER BY nombre");
+  if ($res_users) {
+    while ($r = $res_users->fetch_assoc()) {
+      $vendedores[] = $r['nombre'];
+    }
+  }
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,15 +47,27 @@
             <li class="nav-item">
               <a href="ventas.php" class="btn btn-secondary" style="margin-right:10px;">Ventas</a>
             </li>
+            <li class="nav-item">
+              <?php if (isset($_SESSION['usuario_logeado'])): ?>
+                <button type="button" class="btn btn-warning me-3" disabled><?php echo htmlspecialchars($_SESSION['usuario_logeado']); ?></button>
+              <?php endif; ?> 
+            </li>
             <?php if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin'): ?>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Ver ventas por vendedor</a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" href="graficos.php?vendedor=medina">Ventas de Medina</a></li>
-                  <li><a class="dropdown-item" href="graficos.php?vendedor=vega">Ventas de Vega</a></li>
-                  <li><a class="dropdown-item" href="graficos.php?vendedor=araujo">Ventas de Araujo</a></li>
+                  <li><a class="dropdown-item" href="graficos.php">Todos</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <?php if (!empty($vendedores)): ?>
+                    <?php foreach ($vendedores as $vend): ?>
+                      <li><a class="dropdown-item" href="graficos.php?vendedor=<?php echo urlencode($vend); ?>">Ventas de <?php echo htmlspecialchars($vend); ?></a></li>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <li><span class="dropdown-item">No hay vendedores</span></li>
+                  <?php endif; ?>
                 </ul>
-                <?php endif; ?>
+              </li>
+            <?php endif; ?>
               </ul>
             </div>
           </div>
@@ -57,13 +77,19 @@
 
     <div class="container mt-5">
     <?php
-      $vendedores = ['medina', 'vega', 'araujo'];
       $vendedor_seleccionado = null;
+      // Preparar comparación insensible a mayúsculas
+      $vendedores_lower = array_map('strtolower', $vendedores);
       if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin') {
-        if (isset($_GET['vendedor']) && in_array($_GET['vendedor'], $vendedores)) {
-          $vendedor_seleccionado = $_GET['vendedor'];
+        if (isset($_GET['vendedor'])) {
+          $vget = urldecode($_GET['vendedor']);
+          $idx = array_search(strtolower($vget), $vendedores_lower, true);
+          if ($idx !== false) {
+            $vendedor_seleccionado = $vendedores[$idx];
+          }
         }
       } else if (isset($_SESSION['usuario_logeado'])) {
+        // Si no es admin, mostrar solo sus propias ventas
         $vendedor_seleccionado = $_SESSION['usuario_logeado'];
       }
 
