@@ -28,7 +28,10 @@ if (isset($_POST['ingresar'])) {
 
     //VERIFICACION A LA BD DE LA CONTRASEÑA
     if ($clave === $usuario['password']) {
+      session_start();
+      $_SESSION['usuario_logeado'] = $usuario['nombre'];
       $mensaje = "<div class='alert alert-success mt-3'> Bienvenido <b>" . $usuario['nombre'] . "</b></div>";
+      $mensaje .= "<script>setTimeout(function(){ window.location.href = 'index.php'; }, 3000);</script>";
     } else {
       $mensaje = "<div class='alert alert-danger mt-3'> Contraseña incorrecta</div>";
     }
@@ -77,7 +80,7 @@ if (isset($_POST['ingresar'])) {
           </div>
           <!-- BOTON DE VOLVER A LA PAGINA PRINCIPAL -->
           <div class="text-center">
-            <a href="index.html" class="btn btn-secondary">Volver al inicio</a>
+            <a href="landing.html" class="btn btn-secondary">Volver al inicio</a>
           </div>
         </form>
 
