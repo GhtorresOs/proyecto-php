@@ -35,10 +35,10 @@
 
     <?php
     if (isset($_POST['registrar'])) {
-        
+        // Datos de conexión a MySQL en XAMPP
         $host = "localhost";
-        $user = "root";     
-        $password = "";     
+        $user = "root";     // usuario por defecto en XAMPP
+        $password = "";     // contraseña por defecto vacía
         $dbname = "prueba";
 
         // Conexión con MySQLi
@@ -57,8 +57,13 @@
   $sql = "INSERT INTO usuarios (nombre, email, password) VALUES ('$nombre', '$email', '$password')";
 
     if ($conexion->query($sql) === TRUE) {
+<<<<<<< HEAD
       echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al login...</p>";
       echo "<script>setTimeout(function(){ window.location.href = 'login.php'; }, 2000);</script>";
+=======
+      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al inicio...</p>";
+      echo "<script>setTimeout(function(){ window.location.href = 'index.html'; }, 200);</script>";
+>>>>>>> parent of e89dfb0 (agregué una tabla que muestra las ventas al usuario que está logueado)
     } else {
       echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
     }
