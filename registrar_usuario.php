@@ -5,11 +5,11 @@
   <title>Registro de Usuario</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
-<body>
+<body class="d-flex align-items-center justify-content-center vh-100">
   <style>
-      body{
-          background-color: #9ccbecff;
-      }
+    body{
+      background-color: #9ccbecff;
+    }
   </style>
   <div class="container">
     <div class="row justify-content-center">
@@ -32,6 +32,10 @@
               </div>
               <button type="submit" name="registrar" class="btn btn-primary w-100">Registrar</button>
             </form>
+            <div class="text-center mt-3">
+              <a href="landing.html" class="btn btn-secondary">Volver al inicio</a>
+            </div>
+
 
     <?php
     if (isset($_POST['registrar'])) {
@@ -45,7 +49,7 @@
         $conexion = new mysqli($host, $user, $password, $dbname);
 
         if ($conexion->connect_error) {
-            die("<p class='mensaje' style='color:red;'>❌ Error de conexión: " . $conexion->connect_error . "</p>");
+            die("<p class='mensaje' style='color:red;'> Error de conexión: " . $conexion->connect_error . "</p>");
         }
 
         // Recibir datos
@@ -57,15 +61,10 @@
   $sql = "INSERT INTO usuarios (nombre, email, password) VALUES ('$nombre', '$email', '$password')";
 
     if ($conexion->query($sql) === TRUE) {
-<<<<<<< HEAD
-      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al login...</p>";
+      echo "<p class='mensaje' style='color:green;'>Usuario registrado con éxito. Serás redirigido a la pantalla de inicio de sesión</p>";
       echo "<script>setTimeout(function(){ window.location.href = 'login.php'; }, 2000);</script>";
-=======
-      echo "<p class='mensaje' style='color:green;'>✅ Usuario registrado con éxito. Serás redirigido al inicio...</p>";
-      echo "<script>setTimeout(function(){ window.location.href = 'index.html'; }, 200);</script>";
->>>>>>> parent of e89dfb0 (agregué una tabla que muestra las ventas al usuario que está logueado)
     } else {
-      echo "<p class='mensaje' style='color:red;'>❌ Error: " . $conexion->error . "</p>";
+      echo "<p class='mensaje' style='color:red;'> Error: " . $conexion->error . "</p>";
     }
 
         $conexion->close();
