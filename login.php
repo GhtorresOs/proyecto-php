@@ -1,4 +1,5 @@
 <?php
+session_start();
 if (isset($_POST['ingresar'])) {
     //CONEXION A LA BASE DE DATOS
     $host = "localhost";
@@ -23,12 +24,16 @@ if (isset($_POST['ingresar'])) {
     $stmt->execute();
     $resultado = $stmt->get_result();
 
-    if ($resultado->num_rows > 0) {
-        $usuario = $resultado->fetch_assoc();
+  if ($resultado->num_rows > 0) {
+    $usuario = $resultado->fetch_assoc();
 
     //VERIFICACION A LA BD DE LA CONTRASEÑA
     if ($clave === $usuario['password']) {
-      $mensaje = "<div class='alert alert-success mt-3'> Bienvenido <b>" . $usuario['nombre'] . "</b></div>";
+      // Guardar usuario en la sesión
+      $_SESSION['usuario_logeado'] = $usuario['nombre'];
+      // Mensaje de bienvenida y redirección a index.php después de 1.5s
+      $mensaje = "<div class='alert alert-success mt-3'> Bienvenido <b>" . htmlspecialchars($usuario['nombre']) . "</b></div>";
+      $mensaje .= "<script>setTimeout(function(){ window.location.href = 'index.php'; }, 1500);</script>";
     } else {
       $mensaje = "<div class='alert alert-danger mt-3'> Contraseña incorrecta</div>";
     }
@@ -50,10 +55,10 @@ if (isset($_POST['ingresar'])) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center vh-100">
-  <style>
-    body{
-      background-color: #9ccbecff;
-    }
+    <style>
+        body{
+            background-color: #9ccbecff;
+        }
   </style>
   <div class="col-md-4">
     <div class="card shadow-lg border-0 rounded-4">
@@ -77,7 +82,7 @@ if (isset($_POST['ingresar'])) {
           </div>
           <!-- BOTON DE VOLVER A LA PAGINA PRINCIPAL -->
           <div class="text-center">
-            <a href="index.html" class="btn btn-secondary">Volver al inicio</a>
+            <a href="landing.html" class="btn btn-secondary">Volver al inicio</a>
           </div>
         </form>
 
