@@ -33,6 +33,7 @@
         background-color: #9ccbecff;
       }
     </style>
+      <!-- Navbar de la pagina -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body" data-bs-theme="dark">
       <div class="container-fluid">
         <span class="navbar-brand mb-0 h1">Gráficos</span>
@@ -72,7 +73,7 @@
             </div>
           </div>
         </nav>
-
+      <!-- Navbar de la pagina -->
 
 
     <div class="container mt-5">
@@ -95,14 +96,14 @@
 
       // Mostrar gráfico general por defecto si es admin y no hay vendedor seleccionado
       if (isset($_SESSION['usuario_logeado']) && strtolower($_SESSION['usuario_logeado']) === 'admin' && !$vendedor_seleccionado) {
-        $query = "SELECT producto, SUM(ingresos) as total_ingresos FROM ventas GROUP BY producto";
-        $titulo = 'Ingresos por Producto - Total (General)';
+        $query = "SELECT producto, SUM(precio_bruto) as total_precio_bruto FROM ventas GROUP BY producto";
+        $titulo = 'Precio Bruto (sin IVA) por Producto - General';
         $result = $conexion->query($query);
         $productos = [];
-        $ingresos = [];
+        $precio_bruto = [];
         while ($row = $result->fetch_assoc()) {
           $productos[] = $row['producto'];
-          $ingresos[] = $row['total_ingresos'];
+          $precio_bruto[] = $row['total_precio_bruto'];
         }
         ?>
         <h2 class="mb-4 text-center"><?php echo $titulo; ?></h2>
@@ -116,14 +117,14 @@
         </div>
         <?php
       } elseif ($vendedor_seleccionado) {
-        $query = "SELECT producto, SUM(ingresos) as total_ingresos FROM ventas WHERE vendedor = '" . $conexion->real_escape_string($vendedor_seleccionado) . "' GROUP BY producto";
-        $titulo = 'Ingresos por Producto - ' . ucfirst($vendedor_seleccionado);
+        $query = "SELECT producto, SUM(precio_bruto) as total_precio_bruto FROM ventas WHERE vendedor = '" . $conexion->real_escape_string($vendedor_seleccionado) . "' GROUP BY producto";
+        $titulo = 'Precio Bruto (sin IVA) por Producto - ' . ucfirst($vendedor_seleccionado);
         $result = $conexion->query($query);
         $productos = [];
-        $ingresos = [];
+        $precio_bruto = [];
         while ($row = $result->fetch_assoc()) {
           $productos[] = $row['producto'];
-          $ingresos[] = $row['total_ingresos'];
+          $precio_bruto[] = $row['total_precio_bruto'];
         }
         ?>
         <h2 class="mb-4 text-center"><?php echo $titulo; ?></h2>
@@ -186,8 +187,8 @@
         data: {
           labels: <?php echo json_encode($productos); ?>,
           datasets: [{
-            label: 'Ingresos',
-            data: <?php echo json_encode($ingresos); ?>,
+            label: 'Precio Bruto',
+            data: <?php echo json_encode($precio_bruto); ?>,
             backgroundColor: 'rgba(54, 162, 235, 0.5)',
             borderColor: 'rgba(54, 162, 235, 1)',
             borderWidth: 1
@@ -205,8 +206,8 @@
         data: {
           labels: <?php echo json_encode($productos); ?>,
           datasets: [{
-            label: 'Ingresos',
-            data: <?php echo json_encode($ingresos); ?>,
+            label: 'precio_bruto',
+            data: <?php echo json_encode($precio_bruto); ?>,
             backgroundColor: [
               'rgba(54, 162, 235, 0.5)',
               'rgba(255, 99, 132, 0.5)',

@@ -28,8 +28,8 @@ if ($res) {
     }
 }
 
-// Consulta de qué producto genera más ganancias (suma de importe)
-$sql_total = "SELECT producto, SUM(importe) AS total_ventas FROM ventas " . $where_vendedor . " GROUP BY producto";
+// Consulta de qué producto genera más ganancias (suma de precio_neto)
+$sql_total = "SELECT producto, SUM(precio_neto) AS total_ventas FROM ventas " . $where_vendedor . " GROUP BY producto";
 $res_total = $conexion->query($sql_total);
 $ganancias = [];
 if ($res_total) {
@@ -126,8 +126,8 @@ if ($res_years) {
             <div class="col-md-4 mb-3">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Ingresos por producto</h5>
-                        <p class="card-text">Total de importe generado por producto</p>
+                        <h5 class="card-title">Ganancias por producto</h5>
+                        <p class="card-text">Precio neto (con IVA) generado por producto</p>
                         <?php if (!empty($ganancias)): ?>
                             <ul class="list-group list-group-flush">
                                 <?php foreach ($ganancias as $g): ?>
@@ -138,7 +138,7 @@ if ($res_years) {
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
-                            <div class="alert alert-secondary" role="alert">No se encontraron datos de ingresos.</div>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos.</div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -158,7 +158,7 @@ if ($res_years) {
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
-                            <div class="alert alert-secondary" role="alert">No se encontraron datos de vendedores.</div>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos.</div>
                         <?php endif; ?>
                     </div>
                 </div>
@@ -183,7 +183,7 @@ if ($res_years) {
                                 <?php endforeach; ?>
                             </ul>
                         <?php else: ?>
-                            <div class="alert alert-secondary" role="alert">No se encontraron datos por año.</div>
+                            <div class="alert alert-secondary" role="alert">No se encontraron datos.</div>
                         <?php endif; ?>
                     </div>
                 </div>
