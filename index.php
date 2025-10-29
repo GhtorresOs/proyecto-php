@@ -23,11 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cerrar_sesion'])) {
 // NUEVA VENTA Y ELIMINAR VENTA
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Alta de venta
-    if (isset($_POST['producto'], $_POST['year'], $_POST['precio_unidad'], $_POST['ingresos'], $_POST['region'])) {
+    if (isset($_POST['producto'], $_POST['year'], $_POST['precio_unidad'], $_POST['precio_bruto'], $_POST['region'])) {
         $producto = $conexion->real_escape_string($_POST['producto']);
         $year = (int)$_POST['year'];
         $precio_unidad = (float)$_POST['precio_unidad'];
-        $ingresos = (float)$_POST['ingresos'];
+        $precio_bruto = (float)$_POST['precio_bruto'];
         $region = $conexion->real_escape_string($_POST['region']);
         $vendedor = isset($_SESSION['usuario_logeado']) ? $conexion->real_escape_string($_SESSION['usuario_logeado']) : '';
 
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Insertar especificando id_venta para rellenar huecos
-        $sql_insert = "INSERT INTO ventas (id_venta, producto, year, vendedor, precio_unidad, ingresos, region) VALUES ($id_to_use, '$producto', $year, '$vendedor', $precio_unidad, $ingresos, '$region')";
+        $sql_insert = "INSERT INTO ventas (id_venta, producto, year, vendedor, precio_unidad, precio_bruto, region) VALUES ($id_to_use, '$producto', $year, '$vendedor', $precio_unidad, $precio_bruto, '$region')";
         $ok = $conexion->query($sql_insert);
 
         // Asegurar que el AUTO_INCREMENT queda en max(id)+1 para futuras inserciones automáticas
@@ -86,18 +86,18 @@ if (isset($_SESSION['usuario_logeado'])) {
   $busqueda = isset($_GET['busqueda']) ? $conexion->real_escape_string($_GET['busqueda']) : '';
   if (strtolower($usuario) === 'admin') {
     if ($busqueda !== '') {
-      $sql = "SELECT * FROM ventas WHERE id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR vendedor LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR ingresos LIKE '%$busqueda%' OR region LIKE '%$busqueda%'";
+      $sql = "SELECT * FROM ventas WHERE id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR vendedor LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR precio_bruto LIKE '%$busqueda%' OR region LIKE '%$busqueda%'";
     }
   } else {
     if ($busqueda !== '') {
-      $sql = "SELECT * FROM ventas WHERE vendedor = '" . $conexion->real_escape_string($usuario) . "' AND (id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR ingresos LIKE '%$busqueda%' OR region LIKE '%$busqueda%')";
+      $sql = "SELECT * FROM ventas WHERE vendedor = '" . $conexion->real_escape_string($usuario) . "' AND (id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR precio_bruto LIKE '%$busqueda%' OR region LIKE '%$busqueda%')";
     } else {
       $sql = "SELECT * FROM ventas WHERE vendedor = '" . $conexion->real_escape_string($usuario) . "'";
     }
   }
 } else if (isset($_GET['busqueda']) && $_GET['busqueda'] !== '') {
   $busqueda = $conexion->real_escape_string($_GET['busqueda']);
-  $sql = "SELECT * FROM ventas WHERE id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR vendedor LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR ingresos LIKE '%$busqueda%' OR region LIKE '%$busqueda%'";
+  $sql = "SELECT * FROM ventas WHERE id_venta LIKE '%$busqueda%' OR producto LIKE '%$busqueda%' OR year LIKE '%$busqueda%' OR vendedor LIKE '%$busqueda%' OR precio_unidad LIKE '%$busqueda%' OR precio_bruto LIKE '%$busqueda%' OR region LIKE '%$busqueda%'";
 }
 $result = mysqli_query($conexion, $sql);
 
@@ -116,9 +116,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
   $producto = $conexion->real_escape_string($_POST['producto_editar']);
   $year = (int)$_POST['year_editar'];
   $precio_unidad = (float)$_POST['precio_unidad_editar'];
-  $ingresos = (float)$_POST['ingresos_editar'];
+  $precio_bruto = (float)$_POST['precio_bruto_editar'];
   $region = $conexion->real_escape_string($_POST['region_editar']);
-  $sql_update = "UPDATE ventas SET producto='$producto', year=$year, precio_unidad=$precio_unidad, ingresos=$ingresos, region='$region' WHERE id_venta=$id_venta_editar";
+  $sql_update = "UPDATE ventas SET producto='$producto', year=$year, precio_unidad=$precio_unidad, precio_bruto=$precio_bruto, region='$region' WHERE id_venta=$id_venta_editar";
   $conexion->query($sql_update);
   echo "<script>alert('Venta actualizada correctamente');window.location='index.php';</script>";
   exit();
@@ -185,7 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
         <section class="py-3 py-md-5">
             <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <div class="col-12 col-lg-9 col-xl-8">
+                    <div class="col-12 col-lg-11 col-xl-10">
                         <div class="card widget-card border-light">
                             <div class="card-body p-4">
                                 <h5 class="card-title widget-card-title mb-4">Registro de ventas</h5>
@@ -198,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                                 <th scope="col">Año</th>
                                                 <th scope="col">Vendedor</th>
                                                 <th scope="col">Precio Unidad</th>
-                                                <th scope="col">Ingresos</th>
+                                                <th scope="col">Precio Bruto (sin IVA)</th>
                                                 <th scope="col">Región</th>
                                                 <th scope="col">Acciones</th>                                                
                                             </tr>                                            
@@ -211,11 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                                 <td><?php echo $row ['year']; ?></td>
                                                 <td><?php echo $row ['vendedor']; ?></td>
                                                 <td><?php echo $row ['precio_unidad']; ?></td>
-                                                <td><?php echo $row ['ingresos']; ?></td>
+                                                <td><?php echo $row ['precio_bruto']; ?></td>
                                                 <td><?php echo $row ['region']; ?></td>
                                                 <td>
                                                     <div class="d-grid gap-2 d-md-block">
-                                                        <button type="button" class="btn btn-info" style="margin-left:10px;" data-bs-toggle="modal" data-bs-target="#editarventa" data-id="<?php echo $row['id_venta']; ?>" data-producto="<?php echo $row['producto']; ?>" data-year="<?php echo $row['year']; ?>" data-precio_unidad="<?php echo $row['precio_unidad']; ?>" data-ingresos="<?php echo $row['ingresos']; ?>" data-region="<?php echo $row['region']; ?>">
+                                                        <button type="button" class="btn btn-info" style="margin-left:10px;" data-bs-toggle="modal" data-bs-target="#editarventa" data-id="<?php echo $row['id_venta']; ?>" data-producto="<?php echo $row['producto']; ?>" data-year="<?php echo $row['year']; ?>" data-precio_unidad="<?php echo $row['precio_unidad']; ?>" data-precio_bruto="<?php echo $row['precio_bruto']; ?>" data-region="<?php echo $row['region']; ?>">
                                                             Editar Venta
                                                         </button>
                                                         <button type="button" class="btn btn-danger" style="margin-left:10px;" data-bs-toggle="modal" data-bs-target="#eliminarventa" data-id="<?php echo $row['id_venta']; ?>">
@@ -260,8 +260,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                 <input type="number" step="0.01" class="form-control" id="precio_unidad" name="precio_unidad" required>
                             </div>
                             <div class="mb-3">
-                                <label for="ingresos" class="form-label">Ingresos</label>
-                                <input type="number" step="0.01" class="form-control" id="ingresos" name="ingresos" required>
+                                <label for="precio_bruto" class="form-label">Precio Bruto (sin IVA)</label>
+                                <input type="number" step="0.01" class="form-control" id="precio_bruto" name="precio_bruto" required>
                             </div>
                             <div class="mb-3">
                                 <label for="region" class="form-label">Región</label>
@@ -284,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Título del modal</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Editar Venta</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -303,8 +303,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                                 <input type="number" step="0.01" class="form-control" id="precio_unidad_editar" name="precio_unidad_editar" required>
                             </div>
                             <div class="mb-3">
-                                <label for="ingresos_editar" class="form-label">Ingresos</label>
-                                <input type="number" step="0.01" class="form-control" id="ingresos_editar" name="ingresos_editar" required>
+                                <label for="precio_bruto_editar" class="form-label">Precio Bruto (sin IVA)</label>
+                                <input type="number" step="0.01" class="form-control" id="precio_bruto_editar" name="precio_bruto_editar" required>
                             </div>
                             <div class="mb-3">
                                 <label for="region_editar" class="form-label">Región</label>
@@ -354,7 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_venta_editar'])) {
                 document.getElementById('producto_editar').value = button.getAttribute('data-producto');
                 document.getElementById('year_editar').value = button.getAttribute('data-year');
                 document.getElementById('precio_unidad_editar').value = button.getAttribute('data-precio_unidad');
-                document.getElementById('ingresos_editar').value = button.getAttribute('data-ingresos');
+                document.getElementById('precio_bruto_editar').value = button.getAttribute('data-precio_bruto');
                 document.getElementById('region_editar').value = button.getAttribute('data-region');
             });
         }
